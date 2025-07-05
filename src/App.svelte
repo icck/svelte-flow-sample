@@ -1,30 +1,69 @@
 <script lang="ts">
-  import { SvelteFlow, Controls, Background, MiniMap, type Node, type Edge } from '@xyflow/svelte';
-  import '@xyflow/svelte/dist/style.css';
+  import {
+    SvelteFlow,
+    Controls,
+    Background,
+    MiniMap,
+    Panel,
+    BackgroundVariant,
+    type Node,
+    type Edge,
+  } from "@xyflow/svelte";
+  import "@xyflow/svelte/dist/style.css";
 
-  let nodes = $state.raw<Node[]>([
+  let nodes = $state.raw([
     {
-      id: '1',
-      type: 'input',
-      data: { label: 'Input Node' },
-      position: { x: 250, y: 5 }
+      id: "1",
+      type: "input",
+      position: { x: 250, y: 25 },
+      data: { label: "Input" },
+      style: "background: #6ede87; color: white;",
     },
-    { id: '2', data: { label: 'Default Node' }, position: { x: 100, y: 100 } },
-    { id: '3', data: { label: 'Output Node' }, position: { x: 400, y: 100 } },
-    { id: '4', data: { label: 'Another Node' }, position: { x: 400, y: 200 } }
+    {
+      id: "2",
+      position: { x: 100, y: 125 },
+      data: { label: "Default" },
+      style: "background: #ff0072; color: white;",
+    },
+    {
+      id: "3",
+      type: "output",
+      position: { x: 250, y: 250 },
+      data: { label: "Output" },
+      style: "background: #6865A5; color: white;",
+    },
   ]);
 
-  let edges = $state.raw<Edge[]>([
-    { id: 'e1-2', source: '1', target: '2', label: 'this is an edge label' },
-    { id: 'e1-3', source: '1', target: '3' },
-    { id: 'e3-4', source: '3', target: '4', animated: true, label: 'animated edge' }
+  let edges = $state.raw([
+    {id: "e1-2",source: "1",target: "2"},
+    {id: "e2-3",source: "2",target: "3",animated: true},
   ]);
+
+  let variant: BackgroundVariant = $state(BackgroundVariant.Lines);
+
+
 </script>
 
-<div style="height:100vh">
-  <SvelteFlow {nodes} {edges} fitView>
+<div style:width="100vw" style:height="100vh">
+  <SvelteFlow bind:nodes bind:edges fitView>
+    <Background  {variant} />
     <Controls />
-    <Background />
-    <MiniMap />
+    <MiniMap
+      nodeColor={(node: Node) => {
+        switch (node.type) {
+          case 'input':
+            return '#6ede87';
+          case 'output':
+            return '#6865A5';
+          default:
+            return '#ff0072';
+        }
+      }}
+      zoomable
+      pannable
+    />
+    <Panel position="top-left">
+      <h1>Top Left</h1>
+    </Panel>
   </SvelteFlow>
 </div>
